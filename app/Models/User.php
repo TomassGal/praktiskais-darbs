@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'balance',
+        'role',
     ];
 
     /**
@@ -47,12 +49,19 @@ class User extends Authenticatable
     }
 
     public function bids(){
-        return $this->hasMany(Bid::class, 'user_id')
+        return $this->hasMany(Bid::class, 'user_id');
     }
     public function auctions(){
-        return $this->hasMany(Auction::class, 'user_id')
+        return $this->hasMany(Auction::class, 'user_id');
     }
     public function sales(){
-        return $this->hasMany(Sale::class, 'user_id')
+        return $this->hasMany(Sale::class, 'user_id');
     }
+    public function isAdmin() {
+        return $this->role === 'admin';
+    }
+    public function isUser() {
+        return $this->role === 'user';
+    }
+
 }

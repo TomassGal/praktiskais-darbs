@@ -10,14 +10,17 @@ class Auction extends Model
         'user_id',
         'price',
         'time',
+        'name',
+        'description',
+        'image',
     ];
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
     public function sale(){
-        return $this->hasOne(Sale::class, 'auction_id')
+        return $this->hasOne(Sale::class, 'auction_id');
     }
     public function bids(){
-        return $this->hasMany(Bid::class, 'auction_id')
+        return $this->hasMany(Bid::class, 'auction_id');
     }
 }
