@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="min-height: 100%">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,32 +8,58 @@
 href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 rel="stylesheet">
 </head>
-<body>
+<body class="bg-secondary bg-gradient">
 
-<ul class="nav border-bottom border-4 justify-content-center">
-  <li class="nav-item">
-    <a class="nav-link" href="/">{{ __('View Auctions') }}</a>
-  </li>
-  @auth
-  @can('create', App\Models\Auction::class)
- <li class="nav-item">
-    <a class="nav-link" href="{{route('auction.create')}}">{{ __('Create Auction') }}</a>
-  </li>
-  @endcan
-  <li class="nav-item">
-    <a class="nav-link" href="{{route('auth.logout')}}">{{ __('My Profile') }}</a>
-  </li>
-  @endauth
-  @guest
-  <li class="nav-item">
-    <a class="nav-link" href="{{route('auth.login')}}">{{ __('Log In') }}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="{{route('auth.register')}}">{{ __('Register') }}</a>
-  </li>
-  @endguest
-</ul>
-<main class="container">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
+      <ul class="navbar-nav mb-2">
+        <li class="nav-item me-3">
+          <a class="nav-link" href="/">{{ __('Auctions') }}</a>
+        </li>
+        @auth
+        @can('create', App\Models\Auction::class)
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('auction.create')}}">{{ __('Create Auction') }}</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('auction.personal', Auth::user()->id)}}">{{ __('My Auctions') }}</a>
+        </li>
+        @endcan
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('user.show', Auth::user()->id)}}">{{ __('My Profile') }}</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('auth.logout')}}">{{ __('Sign Out') }}</a>
+        </li>
+        @endauth
+        @guest
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('auth.login')}}">{{ __('Log In') }}</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{{route('auth.register')}}">{{ __('Register') }}</a>
+        </li>
+        @endguest
+</nav>
+    @if (session('success'))
+        <div class="alert alert-success mx-5 my-5">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger mx-5 my-5">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+    <div class="alert alert-danger mx-5 my-5">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+  @endif
+<main class="container mt-4">
 {{ $slot }}
 </main>
 </body>

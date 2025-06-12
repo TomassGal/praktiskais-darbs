@@ -81,7 +81,8 @@ class AuthController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $auction = Auction::findOrFail($id);
+        return view('auctions.show', compact('auction')); 
     }
 
     /**

@@ -2,10 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuctionController;
+use App\Http\Controllers\BidController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 
 Route::resource('auction', AuctionController::class);
+Route::get('/auctions/{id}' , [AuctionController::class, 'personalIndex'])->name('auction.personal');
 
+Route::resource('auctions.bid', BidController::class);
+
+Route::resource('user', UserController::class);
 
 Route::middleware('guest')->get('/login', [AuthController::class, 'showLogin'])->name('auth.login');
 Route::middleware('guest')->post('/login', [AuthController::class, 'login']);

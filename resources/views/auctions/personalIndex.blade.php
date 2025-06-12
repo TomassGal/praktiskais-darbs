@@ -2,8 +2,7 @@
     <x-slot name="title">
         Auctions
     </x-slot>
-    <h3 class="mb-4">Active auctions</h3>
-
+    <h3 class="mb-4">Auctions hosted by {{App\Models\User::find($id)->name}}</h3>
 
     @if ($auctions->count())
         <div class="row">

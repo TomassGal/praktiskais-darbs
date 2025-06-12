@@ -32,6 +32,11 @@ class AuctionPolicy
         return $user->isUser();
     }
 
+    public function createBid(User $user, Auction $auction): bool
+    {
+        return ($user->isUser() && $user->id != $auction->user_id);
+    }
+
     /**
      * Determine whether the user can update the model.
      */

@@ -21,6 +21,6 @@ class Auction extends Model
         return $this->hasOne(Sale::class, 'auction_id');
     }
     public function bids(){
-        return $this->hasMany(Bid::class, 'auction_id');
+        return $this->hasMany(Bid::class, 'auction_id')->orderBy('date', 'desc')->orderBy('time', 'desc');
     }
 }

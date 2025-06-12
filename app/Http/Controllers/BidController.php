@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bid;
+use App\Models\Auction;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class BidController extends Controller
 {
@@ -26,9 +29,22 @@ class BidController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Auction $auction)
     {
-        //
+        $validate = $request->validate([
+            'price' => ['required','numeric', 'min:'.($auction->price +0.01)],
+        ]);
+        Bid::create([
+            'user_id' => Auth::id(),
+            'auction_id' => $auction->id,
+            'price' => $request->price,
+        ]);
+
+        $auction->price = $request->price; 
+        $auction->time = Carbon::parse($auction->time)->addHour();
+        $auction->save();
+
+        return redirect()->route('auction.show', $auction->id)->with('success', 'Bid added successfully!');
     }
 
     /**

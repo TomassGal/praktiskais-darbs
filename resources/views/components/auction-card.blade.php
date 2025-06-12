@@ -1,10 +1,10 @@
-<a href="your-link.html" class="text-decoration-none">
-<div class="card text-center" style="width: 18rem; cursor: pointer;">
-  <img src="{{ $auction->image }}" class="card-img-top" alt="auction-image">
-  <div class="card-body">
+<div class="card text-center border border-dark" style="width: 300px; height:350px">
+  <a href="{{ route('auction.show', $auction->id) }}" class="text-decoration-none">
+  <img src="{{ $auction->image }}" class="card-img-top" alt="auction-image" style="width: 100%; height: 210px;">
+  <div class="card-body border-top border-dark text-body"> 
     <h5 class="card-title">{{ $auction->name }}</h5>
-    <p class="card-text">Current bid: {{ $auction->price }}$</p>
-        <p class="card-text">End date: {{ $auction->time }}</p>
+    <p class="card-text">{{ number_format($auction->price, 2) }}$</p>
+    <p class="card-text">{{\Carbon\Carbon::parse($auction->time)->format('H:i d-m-Y') }}</p>
   </div>
+  </a>
 </div>
-</a>

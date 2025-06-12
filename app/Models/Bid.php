@@ -9,8 +9,8 @@ class Bid extends Model
     protected $fillable = [
         'user_id',
         'auction_id',
-        'time',
         'price',
+        'time',
     ];
     public function user(){
         return $this->belongsTo(User::class, 'user_id');

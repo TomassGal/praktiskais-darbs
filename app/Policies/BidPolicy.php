@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Bid;
+use App\Models\Auction;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -27,9 +28,9 @@ class BidPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, Auction $auction): bool
     {
-        return $user->isUser();
+        return ($user->isUser() && $user->id != $auction->user_id);
     }
 
     /**

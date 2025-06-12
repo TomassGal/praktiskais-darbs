@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Auction;
+use App\Models\Sale;
+use Carbon\Carbon;
 
 class AuctionController extends Controller
 {
@@ -14,10 +16,15 @@ class AuctionController extends Controller
      */
     public function index()
     {
-        $auctions = Auction::all();
+        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale')->get();
         return view('auctions.index', compact('auctions'));
     }
 
+    public function personalIndex(string $id)
+    {
+        $auctions = Auction::where('user_id', $id)->doesntHave('sale')->get();
+        return view('auctions.personalIndex', compact('auctions', 'id'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -57,16 +64,27 @@ class AuctionController extends Controller
         ]);
 
 
-        return redirect()->route('auction.index')->with('success', 'Auction created
-            successfully!'); 
+        return redirect()->route('auction.index')->with('success', 'Auction created successfully!'); 
     }
-
+    public function close(){
+        $auctions = Auction::all();
+        foreach($auctions as $auction){
+            if(Carbon::parse($auction->time)->isPast()){
+                Sale::create([
+                    'user_id' => $auction->user_id,
+                    'auction_id' => $auction->id,
+                ]);
+            }
+        }
+        
+    }
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        $auction = Auction::find($id);
+        return view('auctions.show', compact('auction'));
     }
 
     /**

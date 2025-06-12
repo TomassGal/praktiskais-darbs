@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -36,7 +37,9 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        Log::info('Gyat');
+        $user = User::find($id);
+        return view('users.show', compact('user'));
     }
 
     /**
