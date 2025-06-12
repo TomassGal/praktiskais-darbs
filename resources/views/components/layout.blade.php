@@ -11,7 +11,8 @@ rel="stylesheet">
 <body class="bg-secondary bg-gradient">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
-      <ul class="navbar-nav mb-2">
+  
+<ul class="navbar-nav mb-2">
         <li class="nav-item me-3">
           <a class="nav-link" href="/">{{ __('Auctions') }}</a>
         </li>
@@ -20,15 +21,12 @@ rel="stylesheet">
         <li class="nav-item me-3">
           <a class="nav-link" href="{{route('auction.create')}}">{{ __('Create Auction') }}</a>
         </li>
-        <li class="nav-item me-3">
-          <a class="nav-link" href="{{route('auction.personal', Auth::user()->id)}}">{{ __('My Auctions') }}</a>
-        </li>
         @endcan
         <li class="nav-item me-3">
-          <a class="nav-link" href="{{route('user.show', Auth::user()->id)}}">{{ __('My Profile') }}</a>
+          <a class="nav-link" href="{{route('user.show', Auth::user()->id)}}">{{ __('msg.profile') }}</a>
         </li>
         <li class="nav-item me-3">
-          <a class="nav-link" href="{{route('auth.logout')}}">{{ __('Sign Out') }}</a>
+          <a class="nav-link" >{{ __('Balance') }}: {{Auth::user()->balance}}$</a>
         </li>
         @endauth
         @guest
@@ -39,6 +37,8 @@ rel="stylesheet">
           <a class="nav-link" href="{{route('auth.register')}}">{{ __('Register') }}</a>
         </li>
         @endguest
+
+</ul> 
 </nav>
     @if (session('success'))
         <div class="alert alert-success mx-5 my-5">

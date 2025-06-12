@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Auction;
 use App\Models\Sale;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AuctionController extends Controller
@@ -16,7 +18,33 @@ class AuctionController extends Controller
      */
     public function index()
     {
-        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale')->get();
+        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale')->withCount('bids')->orderBy('bids_count', 'desc')->get();
+        return view('auctions.index', compact('auctions'));
+    }
+    public function sort(Request $request)
+    {
+        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale');
+        switch ($request->get('sort')) {
+        case 'pop':
+            $auctions = $auctions->withCount('bids')->orderBy('bids_count', 'desc')->get();
+            break;
+        case 'asc':
+            $auctions = $auctions->orderBy('price', 'asc')->get();
+            break;
+        case 'desc':
+            $auctions = $auctions->orderBy('price', 'desc')->get();
+            break;
+        }
+        return view('auctions.index', compact('auctions'));
+    }
+    public function sortAsc()
+    {
+        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale')->orderBy('price', 'asc')->get();
+        return view('auctions.index', compact('auctions'));
+    }
+    public function sortDesc()
+    {
+        $auctions = Auction::whereNot('user_id', Auth::id())->doesntHave('sale')->orderBy('price', 'desc')->get();
         return view('auctions.index', compact('auctions'));
     }
 
@@ -69,11 +97,21 @@ class AuctionController extends Controller
     public function close(){
         $auctions = Auction::all();
         foreach($auctions as $auction){
-            if(Carbon::parse($auction->time)->isPast()){
-                Sale::create([
-                    'user_id' => $auction->user_id,
+            if(Carbon::parse($auction->time)->isPast() && !$auction->sale){
+                if ($auction->bids()->count()){
+                    $winnerBid = $auction->bids()->orderBy('price', 'desc')->first();
+                    Sale::create([
+                    'user_id' => $winnerBid->user_id,
                     'auction_id' => $auction->id,
-                ]);
+                    ]);
+                    $user = User::find($auction->user_id);
+                    $user->balance = $user->balance + $auction->price;
+                    $user->save();
+                }
+                else{
+                    $this->destroy($auction->id);
+                }
+
             }
         }
         
@@ -108,6 +146,18 @@ class AuctionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $auction = Auction::find($id);
+        $lastBid = $auction->bids()->orderBy('price', 'desc')->first();
+        if($lastBid){
+            $lastUser = User::find($lastBid->user_id);
+            $lastUser->balance = $lastUser->balance + $lastBid->price;
+            $lastUser->save();
+        }
+        
+        $path = ltrim(str_replace('/storage/', '', $auction->image), '/');  
+        Storage::disk('public')->delete($path);
+        Log::info('$auction->image');
+        $auction->delete();
+        return redirect()->route('auction.index')->with('success', 'Auction deleted successfully!'); 
     }
 }

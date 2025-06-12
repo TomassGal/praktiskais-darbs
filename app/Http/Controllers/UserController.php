@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -37,7 +36,6 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        Log::info('Gyat');
         $user = User::find($id);
         return view('users.show', compact('user'));
     }
@@ -55,9 +53,34 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate = $request->validate([
+            'price' => ['required', 'numeric'],
+        ]);
+        $user = User::find($id);
+        $user->increment('balance', $request->price);
+        return view('users.show', compact('user'));
     }
-
+    public function block(Request $request, string $id)
+    {
+        $user = User::find($id);
+        $user->blocked = true;
+        $user->update();
+        return view('users.show', compact('user'));
+    }
+    public function unBlock(Request $request, string $id)
+    {
+        $user = User::find($id);
+        $user->blocked = false;
+        $user->update();
+        return view('users.show', compact('user'));
+    }
+    public function makeAdmin(Request $request, string $id)
+    {
+        $user = User::find($id);
+        $user->role = "admin";
+        $user->update();
+        return view('users.show', compact('user'));
+    }
     /**
      * Remove the specified resource from storage.
      */

@@ -30,7 +30,7 @@ class BidPolicy
      */
     public function create(User $user, Auction $auction): bool
     {
-        return ($user->isUser() && $user->id != $auction->user_id);
+        return ($user->isUser() && $user->id != $auction->user_id && !$user->isBlocked());
     }
 
     /**

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'balance',
         'role',
+        'blocked',
     ];
 
     /**
@@ -63,5 +64,7 @@ class User extends Authenticatable
     public function isUser() {
         return $this->role === 'user';
     }
-
+    public function isBlocked() {
+        return $this->blocked;
+    }
 }

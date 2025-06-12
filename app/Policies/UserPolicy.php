@@ -39,12 +39,21 @@ class UserPolicy
         return $user->id == $model->id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, User $model): bool
+
+    public function block(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return ($user->isAdmin() && !$model->isBlocked());
+    }
+    public function unBlock(User $user, User $model): bool
+    {
+        return ($user->isAdmin() && $model->isBlocked());
+    }
+    public function addAdmin(User $user, User $model): bool
+    {
+        return ($user->isAdmin());
+    }
+    public function beAdmin(User $user, User $model){
+        return !($model->auctions()->count() || $model->bids()->count() || $model->isAdmin());
     }
 
     /**

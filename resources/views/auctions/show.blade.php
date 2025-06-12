@@ -10,14 +10,22 @@
                 <h3 class="fw-bold">{{$auction->name}}</h3>
                 <h5 class="mb-4"><a href="{{route('user.show', $auction->user->id)}}" class="text-body">{{$auction->user->name}}</a></h5>
                 <p class="mb-4 mt-2">{{$auction->description}}</p>
+                @if(\Carbon\Carbon::parse($auction->time)->isPast())
+                <h4>Auction has ended</h4>
+                @else
                 <h4>Ends at</h4>
                 <p class="card-text">{{\Carbon\Carbon::parse($auction->time)->format('H:i d-m-Y') }}</p>
                 @can('createBid', $auction)
                 <button type="button" class="btn btn-dark mb-3" onclick="loadDoc()">Bid on this item</button>
                 @endcan
                 @can('delete', $auction)
-                <a class="btn btn-danger mb-3" href="/">Delete Auction</a>
+                <form action="{{ route('auction.destroy', $auction->id) }}" method="POST" class="mb-3">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete Auction</button>
+                </form>
                 @endcan
+                @endif
             </div>
             <div class="col-sm border border-3 overflow-auto" style="height: 500px;">
                 <div id="fill">
